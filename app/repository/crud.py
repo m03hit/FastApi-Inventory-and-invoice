@@ -6,7 +6,6 @@ from ..models import models
 from ..schemas import customer,invoice,invoiceitem,product,productcategory,productimage,productitem,purchase,purchaseexpense,purchaseitem,supplier
 
 
-
 def get_invoice(db: Session,id : int):
     return db.query(models.Invoice).filter(models.Invoice.id == id).first()
 

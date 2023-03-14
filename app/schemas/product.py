@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date,datetime
 from typing import List, Optional
 from pydantic import BaseModel
 
@@ -34,6 +34,8 @@ class ProductBase(BaseModel):
     total_value: float
     measure_unit: str
     category_id: int
+    created_at: datetime
+    updated_at: datetime
     class Config:
         orm_mode = True
 
@@ -59,7 +61,18 @@ class Product(ProductBase):
     product_category: ProductCategoryBase
     product_items: list[ProductItemBase] = []
     product_images: list[ProductImageBase] = []
-    product_purchases: list[PurchaseBase] = []
-    invoice_items: list[InvoiceItemBase] = []
+    class Config:
+        orm_mode = True
+
+class ProductCreate(BaseModel):
+    name: str
+    measure_unit: str
+    selling_unit: str
+    category_id: int
+    class Config:
+        orm_mode = True
+
+class ProductCreated(ProductCreate):
+    id: int
     class Config:
         orm_mode = True

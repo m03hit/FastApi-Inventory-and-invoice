@@ -9,6 +9,8 @@ class ProductCategory(Base):
 	__tablename__ = "product_categories"
 	id = Column(Integer,primary_key=True,index=True)
 	name = Column(String)
+	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
+	updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_default=text('now()'))
 	products = relationship("Product",back_populates="product_category")
 
 class Customer(Base):
@@ -26,9 +28,10 @@ class Product(Base):
 	__tablename__ = "products"
 	id = Column(Integer,primary_key=True,index=True)
 	name = Column(String)
-	total_quantity = Column(Float)	
-	total_value = Column(Float)
+	total_quantity = Column(Float,default=0)	
+	total_value = Column(Float,default=0)
 	measure_unit = Column(String)
+	selling_unit = Column(String)
 	category_id = Column(Integer,ForeignKey("product_categories.id"))
 	product_category = relationship("ProductCategory", back_populates="products")
 	product_items = relationship("ProductItem",back_populates="product")
@@ -47,10 +50,11 @@ class ProductItem(Base):
 	total_value = Column(Float)
 	date_purchased = Column(Date)
 	quantity = Column(Float)
-	product_id = Column(Integer,ForeignKey("products.id"))
-	product = relationship("Product",back_populates="product_items")
 	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
 	updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_default=text('now()'))
+	product_id = Column(Integer,ForeignKey("products.id"))
+	product = relationship("Product",back_populates="product_items")
+
 
 class ProductImage(Base):
 	__tablename__ = "product_images"
