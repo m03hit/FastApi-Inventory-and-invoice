@@ -1,10 +1,15 @@
 from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
-from . import customer,invoice,invoiceitem,product,productcategory,productimage,productitem,purchase,purchaseexpense,purchaseitem,supplier
 
-
-
+class InvoiceBase(BaseModel):
+    id: int
+    amount: float
+    date: date
+    profit: float
+    customer_id: int
+    class Config:
+        orm_mode = True
 
 class CustomerBase(BaseModel):
     id: int
@@ -15,7 +20,7 @@ class CustomerBase(BaseModel):
         orm_mode = True
 
 class Customer(CustomerBase):
-    invoices: list[invoice.InvoiceBase] = []
+    invoices: list[InvoiceBase] = []
     class Config:
         orm_mode = True
 
