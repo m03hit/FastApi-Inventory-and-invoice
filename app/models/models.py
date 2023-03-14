@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, Date
 from sqlalchemy.orm import relationship
-from .database import Base
+from ..database import Base
 
 
 class ProductCategory(Base):
@@ -108,6 +108,6 @@ class InvoiceItem(Base):
 	unit_price = Column(Float)	
 	product_id = Column(Integer,ForeignKey("products.id"))
 	invoice_id = Column(Integer,ForeignKey("invoices.id"))
-	product = relationship("Product","invoice_items")
+	product = relationship("Product",back_populates="invoice_items")
 	invoice = relationship("Invoice",back_populates="invoice_items")
 
