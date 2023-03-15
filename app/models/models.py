@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, Date
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, Date, BigInteger
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
@@ -17,7 +17,7 @@ class Customer(Base):
 	__tablename__ = "customers"
 	id = Column(Integer, primary_key=True, index=True)
 	name = Column(String)
-	mobile = Column(Integer)    
+	mobile = Column(BigInteger)    
 	address = Column(String)
 	invoices = relationship("Invoice",back_populates="customer")
 	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
@@ -70,7 +70,7 @@ class Supplier(Base):
 	__tablename__ = "suppliers"
 	id = Column(Integer,primary_key=True,index=True)
 	name = Column(String)
-	mobile = Column(Integer)
+	mobile = Column(BigInteger)
 	supplier_purchases = relationship("Purchase",back_populates="supplier")
 	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
 	updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_default=text('now()'))
@@ -80,7 +80,7 @@ class Purchase(Base):
 	id = Column(Integer,primary_key=True,index=True)
 	date = Column(Date)
 	title = Column(String)
-	amount = Column(String)
+	amount = Column(String,default=0)
 	supplier_id = Column(Integer,ForeignKey("suppliers.id"))
 	supplier = relationship("Supplier",back_populates="supplier_purchases")
 	purchase_items = relationship("PurchaseItem",back_populates="purchase")

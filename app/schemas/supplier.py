@@ -22,3 +22,9 @@ class Supplier(SupplierBase):
     supplier_purchases: list[PurchaseBase] = []
     class Config:
         orm_mode = True
+
+class SupplierCreate(BaseModel):
+    name: str
+    mobile: int
+    class Config:
+        orm_mode = True
