@@ -26,3 +26,10 @@ def read_invoices(id: int,db: Session = Depends(get_db)):
     if not invoice:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"no invoice found with the given id {id}")
     return invoice
+
+@router.post("/",status_code=status.HTTP_201_CREATED,response_model=invoice.InvoiceCreated)
+def create_invoice(invoice: invoice.InvoiceCreate,db: Session = Depends(get_db)):
+    print(invoice.invoice_items)
+    invoice_created = crud.create_invoice(db,invoice)
+    crud.create_invoice_items(db,invoice,invoice_created.id)
+    return crud.get_invoice(db,invoice_created.id)

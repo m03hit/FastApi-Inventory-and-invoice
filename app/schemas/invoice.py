@@ -45,3 +45,40 @@ class Invoice(InvoiceBase):
     invoice_items: list[InvoiceItemWithProductDetails]
     class Config:
         orm_mode = True
+
+class InvoiceItemCreate(BaseModel):
+    product_id: float
+    quantity: float
+    unit_price: float
+    amount: float
+    class Config:
+        orm_mode = True
+
+class InvoiceItemCreated(BaseModel):
+    id: int
+    amount: float
+    quantity: float
+    unit_price: float
+    product_id: float
+    product: ProductBase
+    class Config:
+        orm_mode = True
+
+class InvoiceCreate(BaseModel):
+    customer_id: int
+    date: date
+    amount: float
+    profit: float
+    invoice_items: list[InvoiceItemCreate]
+    class Config:
+        orm_mode = True
+
+class InvoiceCreated(BaseModel):
+    id: int
+    amount: float
+    date: date
+    profit: float
+    customer: CustomerBase
+    invoice_items: list[InvoiceItemCreated]
+    class Config:
+        orm_mode = True
