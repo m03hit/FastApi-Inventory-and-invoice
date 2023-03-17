@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..schemas import customer, invoice, invoiceitem, product, productcategory, productimage, productitem, purchase, purchaseexpense, purchaseitem, supplier
+from ..schemas import customer, invoice, invoiceitem, product, productcategory, productimage, productitem, purchase, purchaseexpense, supplier
 from ..repository import crud
 
 router = APIRouter(

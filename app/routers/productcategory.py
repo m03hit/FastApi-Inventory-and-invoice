@@ -17,7 +17,7 @@ def create_product_category(category: productcategory.ProductCategoryCreate,db: 
     db.refresh(p_category)
     return p_category
 
-@router.get("/",response_model=list[productcategory.ProductCategoryBase])
+@router.get("/",response_model=list[productcategory.ProductCategory])
 def get_product_categories(db: Session = Depends(get_db)):
     return db.query(models.ProductCategory).all()
 

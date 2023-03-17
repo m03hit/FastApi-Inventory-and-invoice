@@ -3,7 +3,7 @@ from fastapi import Depends, FastAPI, HTTPException,status
 
 from ..models import models
 
-from ..schemas import customer,invoice,invoiceitem,product,productcategory,productimage,productitem,purchase,purchaseexpense,purchaseitem,supplier
+from ..schemas import customer,invoice,invoiceitem,product,productcategory,productimage,productitem,purchase,purchaseexpense,supplier
 
 
 def get_customers(db: Session):

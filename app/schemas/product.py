@@ -40,9 +40,7 @@ class ProductBase(BaseModel):
         orm_mode = True
 
 class ProductImageBase(BaseModel):
-    id: int
     image_url: str
-    product_id: int
     class Config:
         orm_mode = True
         
@@ -61,6 +59,16 @@ class Product(ProductBase):
     product_category: ProductCategoryBase
     product_items: list[ProductItemBase] = []
     product_images: list[ProductImageBase] = []
+    #def dict(self, *args, **kwargs):
+    #    # get the dictionary representation of the Product instance
+    #    product_dict = super().dict(*args, **kwargs)
+    #    # get the dictionary representation of the ProductCategoryBase instance
+    #    category_dict = self.product_category.__dict__
+    #    # merge the two dictionaries
+    #    product_dict.update(category_dict)
+    #    # remove the product_category key as it's already merged with the root level JSON object
+    #    product_dict.pop("product_category")
+    #    return product_dict
     class Config:
         orm_mode = True
 
@@ -69,10 +77,12 @@ class ProductCreate(BaseModel):
     measure_unit: str
     selling_unit: str
     category_id: int
+    product_images: list[str] 
     class Config:
         orm_mode = True
 
 class ProductCreated(ProductCreate):
     id: int
+    product_images: list[ProductImageBase]
     class Config:
         orm_mode = True

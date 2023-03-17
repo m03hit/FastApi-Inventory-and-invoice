@@ -36,7 +36,6 @@ class Product(Base):
 	product_category = relationship("ProductCategory", back_populates="products")
 	product_items = relationship("ProductItem",back_populates="product")
 	product_images = relationship("ProductImage",back_populates="product")
-	product_purchases = relationship("PurchaseItem",back_populates="product")
 	invoice_items = relationship("InvoiceItem",back_populates="product")
 	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
 	updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_default=text('now()'))
@@ -50,10 +49,12 @@ class ProductItem(Base):
 	total_value = Column(Float)
 	date_purchased = Column(Date)
 	quantity = Column(Float)
+	purchase_id = Column(Integer,ForeignKey("purchases.id"))
 	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
 	updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_default=text('now()'))
 	product_id = Column(Integer,ForeignKey("products.id"))
 	product = relationship("Product",back_populates="product_items")
+	purchase = relationship("Purchase",back_populates="products")
 
 
 class ProductImage(Base):
@@ -83,31 +84,18 @@ class Purchase(Base):
 	amount = Column(String,default=0)
 	supplier_id = Column(Integer,ForeignKey("suppliers.id"))
 	supplier = relationship("Supplier",back_populates="supplier_purchases")
-	purchase_items = relationship("PurchaseItem",back_populates="purchase")
 	purchase_expenses = relationship("PurchaseExpense",back_populates="purchase")
+	products = relationship("ProductItem",back_populates="purchase")
 	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
 	updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_default=text('now()'))
 
-
-class PurchaseItem(Base):
-	__tablename__ = "purchase_items"
-	id = Column(Integer,primary_key=True,index=True)
-	quantity = Column(Float)
-	unit_price = Column(Float)
-	amount = Column(Float)
-	product_id = Column(Integer,ForeignKey("products.id"))
-	purchase_id = Column(Integer,ForeignKey("purchases.id"))
-	purchase = relationship("Purchase",back_populates="purchase_items")
-	product = relationship("Product",back_populates="product_purchases")
-	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
-	updated_at = Column(TIMESTAMP(timezone=True),nullable=True, server_default=text('now()'))
 
 class PurchaseExpense(Base):
 	__tablename__ = "purchase_expenses"
 	id = Column(Integer,primary_key=True,index=True)
 	amount = Column(Float)
 	title = Column(String)
-	description = Column(Float)
+	description = Column(String)
 	purchase_id = Column(Integer,ForeignKey("purchases.id"))
 	purchase = relationship("Purchase",back_populates="purchase_expenses")
 	created_at = Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))

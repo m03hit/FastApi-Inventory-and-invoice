@@ -9,15 +9,6 @@ class SupplierBase(BaseModel):
     class Config:
         orm_mode = True
 
-class PurchaseItemBase(BaseModel):
-    id: int
-    quantity: float
-    unit_price: float
-    amount: float
-    product_id: int
-    purchase_id: int
-    class Config:
-        orm_mode = True
 
 class PurchaseExpenseBase(BaseModel):
     id: int
@@ -37,9 +28,44 @@ class PurchaseBase(BaseModel):
     class Config:
         orm_mode = True
 
+class ProductItemBase(BaseModel):
+    id: int
+    unit_price: float
+    effective_unit_price: float
+    total_value: float
+    date_purchased: date
+    quantity: float
+    product_id: int
+    class Config:
+        orm_mode = True
+
 class Purchase(PurchaseBase):
     supplier: SupplierBase
-    purchase_items: list[PurchaseItemBase] = []
+    products: list[ProductItemBase] = []
     purchase_expenses: list[PurchaseExpenseBase] = []
     class Config:
         orm_mode = True
+
+class ProductItemCreate(BaseModel):
+    unit_price: float
+    effective_unit_price: float
+    date_purchased: date
+    quantity: float
+    product_id: int
+    class Config:
+        orm_mode = True
+
+class PurchaseExpenseCreate(BaseModel):
+    amount: float
+    title: str
+    description: str
+    class Config:
+        orm_mode = True
+
+class PurchaseCreate(BaseModel):
+    date: date
+    title: str
+    amount: float
+    supplier_id: int
+    products: list[ProductItemCreate]
+    purchase_expenses: list[PurchaseExpenseCreate]

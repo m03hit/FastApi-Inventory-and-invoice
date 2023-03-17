@@ -1,7 +1,7 @@
 from fastapi import Depends, FastAPI, HTTPException, status
 
 from .models import models
-from .routers import customer, invoice, productcategory, product, productimage, supplier
+from .routers import customer, invoice, productcategory, product, productimage, supplier, purchase
 
 
 from .database import engine
@@ -17,3 +17,5 @@ app.include_router(productcategory.router)
 app.include_router(product.router)
 app.include_router(productimage.router)
 app.include_router(supplier.router)
+app.include_router(purchase.router)
+
