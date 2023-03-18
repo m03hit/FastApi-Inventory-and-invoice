@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = {extras = ["all"], version = "*"}
 sqlalchemy = "*"
 psycopg2 = "*"
+fastapi = {extras = ["all"], version = "*"}
 
 [dev-packages]
 autopep8 = "*"
+black = "*"
 
 [requires]
 python_version = "3.11"

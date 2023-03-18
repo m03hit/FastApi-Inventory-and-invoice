@@ -2,6 +2,7 @@ from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
 
+
 class ProductBase(BaseModel):
     id: int
     name: str
@@ -9,8 +10,10 @@ class ProductBase(BaseModel):
     total_value: float
     measure_unit: str
     category_id: int
+
     class Config:
         orm_mode = True
+
 
 class ProductItemBase(BaseModel):
     id: int
@@ -20,10 +23,13 @@ class ProductItemBase(BaseModel):
     date_purchased: date
     quantity: float
     product_id: int
+
     class Config:
         orm_mode = True
 
+
 class ProductItem(ProductItemBase):
     product: ProductBase
+
     class Config:
         orm_mode = True

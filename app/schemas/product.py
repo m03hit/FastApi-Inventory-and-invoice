@@ -1,12 +1,15 @@
-from datetime import date,datetime
+from datetime import date, datetime
 from typing import List, Optional
 from pydantic import BaseModel
+
 
 class ProductCategoryBase(BaseModel):
     id: int
     name: str
+
     class Config:
         orm_mode = True
+
 
 class InvoiceItemBase(BaseModel):
     id: int
@@ -15,8 +18,10 @@ class InvoiceItemBase(BaseModel):
     unit_price: float
     product_id: float
     invoice_id: float
+
     class Config:
         orm_mode = True
+
 
 class PurchaseBase(BaseModel):
     id: int
@@ -24,8 +29,10 @@ class PurchaseBase(BaseModel):
     title: str
     amount: float
     supplier_id: float
+
     class Config:
         orm_mode = True
+
 
 class ProductBase(BaseModel):
     id: int
@@ -36,14 +43,18 @@ class ProductBase(BaseModel):
     category_id: int
     created_at: datetime
     updated_at: datetime
+
     class Config:
         orm_mode = True
 
+
 class ProductImageBase(BaseModel):
     image_url: str
+
     class Config:
         orm_mode = True
-        
+
+
 class ProductItemBase(BaseModel):
     id: int
     unit_price: float
@@ -52,14 +63,17 @@ class ProductItemBase(BaseModel):
     date_purchased: date
     quantity: float
     product_id: int
+
     class Config:
         orm_mode = True
+
 
 class Product(ProductBase):
     product_category: ProductCategoryBase
     product_items: list[ProductItemBase] = []
     product_images: list[ProductImageBase] = []
-    #def dict(self, *args, **kwargs):
+
+    # def dict(self, *args, **kwargs):
     #    # get the dictionary representation of the Product instance
     #    product_dict = super().dict(*args, **kwargs)
     #    # get the dictionary representation of the ProductCategoryBase instance
@@ -72,17 +86,21 @@ class Product(ProductBase):
     class Config:
         orm_mode = True
 
+
 class ProductCreate(BaseModel):
     name: str
     measure_unit: str
     selling_unit: str
     category_id: int
-    product_images: list[str] 
+    product_images: list[str]
+
     class Config:
         orm_mode = True
+
 
 class ProductCreated(ProductCreate):
     id: int
     product_images: list[ProductImageBase]
+
     class Config:
         orm_mode = True
