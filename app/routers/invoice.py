@@ -4,10 +4,7 @@ from ..database.database import get_db
 from ..schemas import invoice
 from ..repository import crud
 
-router = APIRouter(
-    prefix="/invoices",
-    tags=['Invoice']
-)
+router = APIRouter(prefix="/invoices", tags=["Invoice"])
 
 
 # @router.post("/", status_code=status.HTTP_201_CREATED, response_model=customer.UserOut)
@@ -25,11 +22,16 @@ def read_invoices(db: Session = Depends(get_db)):
 def read_invoices(id: int, db: Session = Depends(get_db)):
     invoice = crud.get_invoice(db, id)
     if not invoice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"no invoice found with the given id {id}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no invoice found with the given id {id}",
+        )
     return invoice
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=invoice.InvoiceCreated)
+@router.post(
+    "/", status_code=status.HTTP_201_CREATED, response_model=invoice.InvoiceCreated
+)
 def create_invoice(invoice: invoice.InvoiceCreate, db: Session = Depends(get_db)):
     print(invoice.invoice_items)
     invoice_created = crud.create_invoice(db, invoice)

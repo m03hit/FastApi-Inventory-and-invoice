@@ -5,10 +5,7 @@ from ..repository import crud
 from ..schemas import supplier
 from ..models import models
 
-router = APIRouter(
-    prefix="/suppliers",
-    tags=['Supplier']
-)
+router = APIRouter(prefix="/suppliers", tags=["Supplier"])
 
 
 @router.post("/", response_model=supplier.SupplierBase)

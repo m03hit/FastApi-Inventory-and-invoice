@@ -1,4 +1,13 @@
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, Date, BigInteger
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Date,
+    BigInteger,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
@@ -9,8 +18,12 @@ class ProductCategory(Base):
     __tablename__ = "product_categories"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
     products = relationship("Product", back_populates="product_category")
 
 
@@ -21,8 +34,12 @@ class Customer(Base):
     mobile = Column(BigInteger)
     address = Column(String)
     invoices = relationship("Invoice", back_populates="customer")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
 
 
 class Product(Base):
@@ -38,8 +55,12 @@ class Product(Base):
     product_items = relationship("ProductItem", back_populates="product")
     product_images = relationship("ProductImage", back_populates="product")
     invoice_items = relationship("InvoiceItem", back_populates="product")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
 
 
 class ProductItem(Base):
@@ -51,8 +72,12 @@ class ProductItem(Base):
     date_purchased = Column(Date)
     quantity = Column(Float)
     purchase_id = Column(Integer, ForeignKey("purchases.id"))
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
     product_id = Column(Integer, ForeignKey("products.id"))
     product = relationship("Product", back_populates="product_items")
     purchase = relationship("Purchase", back_populates="products")
@@ -64,8 +89,12 @@ class ProductImage(Base):
     image_url = Column(String)
     product_id = Column(Integer, ForeignKey("products.id"))
     product = relationship("Product", back_populates="product_images")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
 
 
 class Supplier(Base):
@@ -74,8 +103,12 @@ class Supplier(Base):
     name = Column(String)
     mobile = Column(BigInteger)
     supplier_purchases = relationship("Purchase", back_populates="supplier")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
 
 
 class Purchase(Base):
@@ -88,8 +121,12 @@ class Purchase(Base):
     supplier = relationship("Supplier", back_populates="supplier_purchases")
     purchase_expenses = relationship("PurchaseExpense", back_populates="purchase")
     products = relationship("ProductItem", back_populates="purchase")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
 
 
 class PurchaseExpense(Base):
@@ -100,8 +137,12 @@ class PurchaseExpense(Base):
     description = Column(String)
     purchase_id = Column(Integer, ForeignKey("purchases.id"))
     purchase = relationship("Purchase", back_populates="purchase_expenses")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
 
 
 class Invoice(Base):
@@ -113,8 +154,12 @@ class Invoice(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"))
     customer = relationship("Customer", back_populates="invoices")
     invoice_items = relationship("InvoiceItem", back_populates="invoice")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
 
 
 class InvoiceItem(Base):
@@ -127,5 +172,9 @@ class InvoiceItem(Base):
     invoice_id = Column(Integer, ForeignKey("invoices.id"))
     product = relationship("Product", back_populates="invoice_items")
     invoice = relationship("Invoice", back_populates="invoice_items")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, server_default=text('now()'))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )

@@ -5,13 +5,12 @@ from ..database.database import get_db
 from ..repository import crud
 from ..schemas import customer
 
-router = APIRouter(
-    prefix="/customers",
-    tags=['Customer']
+router = APIRouter(prefix="/customers", tags=["Customer"])
+
+
+@router.post(
+    "/", response_model=customer.CustomerBase, status_code=status.HTTP_201_CREATED
 )
-
-
-@router.post("/", response_model=customer.CustomerBase, status_code=status.HTTP_201_CREATED)
 def create_customer(user: customer.CreateCustomer, db: Session = Depends(get_db)):
     db_user = crud.get_customer_by_mobile(db, user.mobile)
 
@@ -24,7 +23,10 @@ def create_customer(user: customer.CreateCustomer, db: Session = Depends(get_db)
 def read_customer(id: int, db: Session = Depends(get_db)):
     db_customer = crud.get_customer(db, id)
     if not db_customer:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"no customer found with the given {id} ")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no customer found with the given {id} ",
+        )
 
     return db_customer
 

@@ -2,7 +2,15 @@ from fastapi import FastAPI
 
 from .database.database import engine
 from .models import models
-from .routers import customer, invoice, productcategory, product, productimage, supplier, purchase
+from .routers import (
+    customer,
+    invoice,
+    productcategory,
+    product,
+    productimage,
+    supplier,
+    purchase,
+)
 
 models.Base.metadata.create_all(bind=engine)
 

@@ -4,14 +4,13 @@ from ..database.database import get_db
 from ..models import models
 from ..schemas import productcategory
 
-router = APIRouter(
-    prefix="/productcategories",
-    tags=['Product Category']
-)
+router = APIRouter(prefix="/productcategories", tags=["Product Category"])
 
 
 @router.post("/", response_model=productcategory.ProductCategoryBase)
-def create_product_category(category: productcategory.ProductCategoryCreate, db: Session = Depends(get_db)):
+def create_product_category(
+    category: productcategory.ProductCategoryCreate, db: Session = Depends(get_db)
+):
     p_category = models.ProductCategory(name=category.name)
     db.add(p_category)
     db.commit()

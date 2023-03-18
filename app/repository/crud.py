@@ -14,7 +14,9 @@ def get_customer(db: Session, id: int):
 
 
 def create_customer(db: Session, user: customer.CreateCustomer):
-    db_customer = models.Customer(name=user.name, mobile=user.mobile, address=user.address)
+    db_customer = models.Customer(
+        name=user.name, mobile=user.mobile, address=user.address
+    )
     db.add(db_customer)
     db.commit()
     db.refresh(db_customer)
@@ -29,15 +31,18 @@ def delete_customer(db: Session, id: int):
     customer = db.query(models.Customer).filter(models.Customer.id == id)
 
     if not customer.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"no customer exists with id - {id} ")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no customer exists with id - {id} ",
+        )
 
     customer.delete(synchronize_session=False)
     db.commit()
-    return 'done'
+    return "done"
 
 
 # Invoice #######
+
 
 def get_invoice(db: Session, id: int):
     return db.query(models.Invoice).filter(models.Invoice.id == id).first()
@@ -48,19 +53,32 @@ def get_invoices(db: Session):
 
 
 def create_invoice(db: Session, invoice: invoice.InvoiceCreate):
-    db_invoice = models.Invoice(amount=invoice.amount, date=invoice.date, profit=invoice.profit,
-                                customer_id=invoice.customer_id)
+    db_invoice = models.Invoice(
+        amount=invoice.amount,
+        date=invoice.date,
+        profit=invoice.profit,
+        customer_id=invoice.customer_id,
+    )
     db.add(db_invoice)
     db.commit()
     db.refresh(db_invoice)
     return db_invoice
 
 
-def create_invoice_items(db: Session, invoice: invoice.InvoiceCreate, invoice_id_int: int):
+def create_invoice_items(
+    db: Session, invoice: invoice.InvoiceCreate, invoice_id_int: int
+):
     print(invoice.invoice_items)
     for item in invoice.invoice_items:
-        db.add(models.InvoiceItem(amount=item.amount, unit_price=item.unit_price, quantity=item.quantity,
-                                  product_id=item.product_id, invoice_id=invoice_id_int))
+        db.add(
+            models.InvoiceItem(
+                amount=item.amount,
+                unit_price=item.unit_price,
+                quantity=item.quantity,
+                product_id=item.product_id,
+                invoice_id=invoice_id_int,
+            )
+        )
 
     # db.add_all(invoice.invoice_items)
     db.commit()
