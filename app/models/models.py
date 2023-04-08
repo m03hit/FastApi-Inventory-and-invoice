@@ -33,6 +33,8 @@ class Customer(Base):
     name = Column(String)
     mobile = Column(BigInteger)
     address = Column(String)
+    deleted_at = Column(TIMESTAMP(timezone=True), nullable=True)
+    is_deleted = Column(Boolean, default=False)
     invoices = relationship("Invoice", back_populates="customer")
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")

@@ -5,6 +5,9 @@ from ..models import models
 from ..schemas import customer, invoice
 
 
+##### CUSTOMERS #######
+
+
 def get_customers(db: Session):
     return db.query(models.Customer).all()
 
