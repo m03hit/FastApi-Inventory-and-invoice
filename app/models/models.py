@@ -180,3 +180,17 @@ class InvoiceItem(Base):
     updated_at = Column(
         TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
     )
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    user_name = Column(String, nullable=False, unique=True)
+    is_disabled = Column(Boolean, default=False)
+    password = Column(String, nullable=False)
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
+    )
