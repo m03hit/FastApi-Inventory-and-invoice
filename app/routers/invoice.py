@@ -34,6 +34,13 @@ def read_invoices(id: int, db: Session = Depends(get_db)):
 )
 def create_invoice(invoice: invoice.InvoiceCreate, db: Session = Depends(get_db)):
     print(invoice.invoice_items)
+    customer = crud.get_customer(db, invoice.customer_id)
+    if not customer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"customer with id {invoice.customer_id} does not exist",
+        )
+
     invoice_created = crud.create_invoice(db, invoice)
     crud.create_invoice_items(db, invoice, invoice_created.id)
     return crud.get_invoice(db, invoice_created.id)

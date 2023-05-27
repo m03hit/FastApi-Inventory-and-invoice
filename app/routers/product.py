@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..database.database import get_db
@@ -30,3 +30,14 @@ def create_product(product: product.ProductCreate, db: Session = Depends(get_db)
 @router.get("/", response_model=list[product.Product])
 def get_products(db: Session = Depends(get_db)):
     return db.query(models.Product).all()
+
+
+@router.get("/{id}", response_model=product.Product)
+def read_product(id: int, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.id == id).first()
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no product found with the given id {id}",
+        )
+    return product

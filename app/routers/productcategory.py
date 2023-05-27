@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database.database import get_db
 from ..models import models
@@ -21,3 +21,16 @@ def create_product_category(
 @router.get("/", response_model=list[productcategory.ProductCategory])
 def get_product_categories(db: Session = Depends(get_db)):
     return db.query(models.ProductCategory).all()
+
+
+@router.get("/{id}", response_model=productcategory.ProductCategory)
+def get_product_categorie(id: int, db: Session = Depends(get_db)):
+    product_category = (
+        db.query(models.ProductCategory).filter(models.ProductCategory.id == id).first()
+    )
+    if not product_category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no product Catergory found with the given id {id}",
+        )
+    return product_category

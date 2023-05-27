@@ -15,7 +15,10 @@ def create_customer(user: customer.CreateCustomer, db: Session = Depends(get_db)
     db_user = crud.get_customer_by_mobile(db, user.mobile)
 
     if db_user:
-        raise HTTPException(status_code=400, detail="Mobile already registered")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Mobile already registered with customer id {db_user.id}",
+        )
     return crud.create_customer(db=db, user=user)
 
 
@@ -36,10 +39,10 @@ def read_customers(db: Session = Depends(get_db)):
     return crud.get_customers(db=db)
 
 
-@router.delete("/{id}")
+""" @router.delete("/{id}")
 def delete_customer(id: int, db: Session = Depends(get_db)):
     deleted = crud.delete_customer(db=db, id=id)
     if deleted:
         return {"status": "deleted"}
     else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND) """

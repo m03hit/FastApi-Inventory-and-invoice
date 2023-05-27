@@ -83,6 +83,7 @@ class ProductItem(Base):
     product_id = Column(Integer, ForeignKey("products.id"))
     product = relationship("Product", back_populates="product_items")
     purchase = relationship("Purchase", back_populates="products")
+    invoice_items = relationship("InvoiceItem", back_populates="product_item")
 
 
 class ProductImage(Base):
@@ -172,6 +173,8 @@ class InvoiceItem(Base):
     unit_price = Column(Float)
     product_id = Column(Integer, ForeignKey("products.id"))
     invoice_id = Column(Integer, ForeignKey("invoices.id"))
+    product_item_id = Column(Integer, ForeignKey("product_items.id"))
+    product_item = relationship("ProductItem", back_populates="invoice_items")
     product = relationship("Product", back_populates="invoice_items")
     invoice = relationship("Invoice", back_populates="invoice_items")
     created_at = Column(

@@ -80,6 +80,7 @@ def create_invoice_items(
                 quantity=item.quantity,
                 product_id=item.product_id,
                 invoice_id=invoice_id_int,
+                product_item_id=item.product_item_id,
             )
         )
 

@@ -36,6 +36,19 @@ class ProductBase(BaseModel):
         orm_mode = True
 
 
+class ProductItemBase(BaseModel):
+    id: int
+    unit_price: float
+    effective_unit_price: float
+    total_value: float
+    date_purchased: date
+    quantity: float
+    product_id: int
+
+    class Config:
+        orm_mode = True
+
+
 class InvoiceItemWithProductDetails(BaseModel):
     id: int
     amount: float
@@ -44,6 +57,7 @@ class InvoiceItemWithProductDetails(BaseModel):
     product_id: float
     invoice_id: float
     product: ProductBase
+    product_item: ProductItemBase
 
     class Config:
         orm_mode = True
@@ -62,6 +76,7 @@ class InvoiceItemCreate(BaseModel):
     quantity: float
     unit_price: float
     amount: float
+    product_item_id: float
 
     class Config:
         orm_mode = True
@@ -74,6 +89,7 @@ class InvoiceItemCreated(BaseModel):
     unit_price: float
     product_id: float
     product: ProductBase
+    product_item: ProductItemBase
 
     class Config:
         orm_mode = True

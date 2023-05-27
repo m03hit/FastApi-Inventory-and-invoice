@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..database.database import get_db
@@ -19,3 +19,22 @@ def create_product_image(
     db.commit()
     db.refresh(image)
     return image
+
+
+@router.get("/{id}", response_model=productimage.ProductImage)
+def get_product_image(id: int, db: Session = Depends(get_db)):
+    product_image = (
+        db.query(models.ProductImage).filter(models.ProductImage.id == id).first()
+    )
+
+    if not product_image:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"no product image found with the given id {id}",
+        )
+    return product_image
+
+
+@router.get("/", response_model=list[productimage.ProductImage])
+def get_product_images(db: Session = Depends(get_db)):
+    return db.query(models.ProductImage).all()
