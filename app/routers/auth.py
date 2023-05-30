@@ -25,9 +25,13 @@ async def login_for_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(seconds=20)
+    if user.is_disabled == True:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="bye")
+
+    access_token_expires = timedelta(hours=20)
     access_token = oauth2.create_access_token(
-        data={"sub": user.user_name}, expires_delta=access_token_expires
+        data={"sub": user.user_name, "p_version": user.password_version},
+        expires_delta=access_token_expires,
     )
     return {"access_token": access_token, "token_type": "bearer"}
 

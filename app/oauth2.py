@@ -53,9 +53,12 @@ async def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    password_version = -1
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+        password_version = payload.get("p_version")
+
         if username is None:
             raise credentials_exception
         token_data = authSchemas.TokenData(user_name=username)
@@ -64,13 +67,16 @@ async def get_current_user(
     user = get_user(db, username=token_data.user_name)
     if user is None:
         raise credentials_exception
+    if user.password_version != password_version:
+        raise credentials_exception
+
     return user
 
 
 async def get_current_active_user(
     current_user: Annotated[authSchemas.User, Depends(get_current_user)]
 ):
-    if current_user.is_disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    print(current_user.__dict__)
+    # if current_user.is_disabled:
+    #     raise HTTPException(status_code=400, detail="Inactive user")
+    # print(current_user.__dict__)
     return current_user
