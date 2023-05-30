@@ -40,6 +40,7 @@ class ProductBase(BaseModel):
     total_quantity: float
     total_value: float
     measure_unit: str
+    selling_unit: str
     category_id: int
     created_at: datetime
     updated_at: datetime
