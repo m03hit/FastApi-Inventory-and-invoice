@@ -190,6 +190,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_name = Column(String, nullable=False, unique=True)
     is_disabled = Column(Boolean, default=False)
+    is_admin = Column(Boolean, default=False)
     password = Column(String, nullable=False)
     password_version = Column(Integer, default=0)
     created_at = Column(
