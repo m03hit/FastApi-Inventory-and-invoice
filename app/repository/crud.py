@@ -2,7 +2,14 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..models import models
-from ..schemas import customer, invoice, productcategory
+from ..schemas import (
+    customer,
+    invoice,
+    productcategory,
+    supplier,
+    productimage,
+    product,
+)
 
 
 ##### CUSTOMERS #######
@@ -128,3 +135,56 @@ def create_invoice_items(
 
     # db.add_all(invoice.invoice_items)
     db.commit()
+
+
+## Supplier
+
+
+def create_supplier(supplier: supplier.SupplierCreate, db: Session):
+    create_supplier = models.Supplier(name=supplier.name, mobile=supplier.mobile)
+    db.add(create_supplier)
+    db.commit()
+    db.refresh(create_supplier)
+    return create_supplier
+
+
+def get_suppliers(db: Session):
+    return db.query(models.Supplier).all()
+
+
+def get_supplier(id: int, db: Session):
+    supplier = db.query(models.Supplier).filter(models.Supplier.id == id).first()
+    return supplier
+
+
+## Products
+
+
+def create_product(product: product.ProductCreate, db: Session):
+    product_to_add = models.Product(
+        name=product.name,
+        measurement_unit=product.measurement_unit,
+        category_id=product.category_id,
+        measurement_way_id=product.measurement_way_id,
+    )
+    db.add(product_to_add)
+    db.commit()
+    db.refresh(product_to_add)
+    return product_to_add
+
+
+def create_image(p_id: int, db: Session, img_url: str):
+    image = models.ProductImage(image_url=img_url, product_id=p_id)
+    db.add(image)
+    db.commit()
+    db.refresh(image)
+    return image
+
+
+def get_products(db: Session):
+    return db.query(models.Product).all()
+
+
+def read_product(id: int, db: Session):
+    product = db.query(models.Product).filter(models.Product.id == id).first()
+    return product

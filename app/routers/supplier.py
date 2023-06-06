@@ -4,27 +4,30 @@ from ..database.database import get_db
 from ..repository import crud
 from ..schemas import supplier
 from ..models import models
+from ..repository import crud
 
 router = APIRouter(prefix="/suppliers", tags=["Supplier"])
 
 
-@router.post("/", response_model=supplier.SupplierBase)
+@router.post(
+    "/", response_model=supplier.SupplierBase, status_code=status.HTTP_201_CREATED
+)
 def create_supplier(supplier: supplier.SupplierCreate, db: Session = Depends(get_db)):
-    create_supplier = models.Supplier(name=supplier.name, mobile=supplier.mobile)
-    db.add(create_supplier)
-    db.commit()
-    db.refresh(create_supplier)
-    return create_supplier
+    created_supplier = crud.create_supplier(supplier, db)
+    if created_supplier.id > 0:
+        return created_supplier
+    else:
+        raise HTTPException(status_code=500, detail="Something went wrong")
 
 
 @router.get("/", response_model=list[supplier.Supplier])
 def get_suppliers(db: Session = Depends(get_db)):
-    return db.query(models.Supplier).all()
+    return crud.get_suppliers(db)
 
 
 @router.get("/{id}", response_model=supplier.Supplier)
 def get_supplier(id: int, db: Session = Depends(get_db)):
-    supplier = db.query(models.Supplier).filter(models.Supplier.id == id).first()
+    supplier = crud.get_supplier(id, db)
     if not supplier:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -24,32 +24,36 @@ def create_product(product: product.ProductCreate, db: Session = Depends(get_db)
             detail=f"no measurement way exists with id : {product.measurement_way_id}",
         )
 
-    product_to_add = models.Product(
-        name=product.name,
-        measurement_unit=product.measurement_unit,
-        category_id=product.category_id,
-        measurement_way_id=product.measurement_way_id,
-    )
-    db.add(product_to_add)
-    db.commit()
-    db.refresh(product_to_add)
-    for image in product.product_images:
-        db.add(models.ProductImage(image_url=image, product_id=product_to_add.id))
-        db.commit()
-    return (
-        db.query(models.Product).filter(models.Product.id == product_to_add.id).first()
-    )
+    product_to_add = crud.create_product(product, db)
+    if product_to_add is None:
+        raise HTTPException(
+            status_code=500, detail="Some error occurred while adding product"
+        )
+    for image_url in product.product_images:
+        image_created = crud.create_image(product_to_add.id, db, image_url)
+        if image_created == None:
+            raise HTTPException(
+                status_code=500, detail="Some error occurred while adding product photo"
+            )
+
+    product_to_return = crud.read_product(product_to_add.id, db)
+    if product_to_return is not None:
+        return product_to_add
+    else:
+        raise HTTPException(
+            status_code=500, detail="Some error occurred while adding product"
+        )
 
 
 @router.get("/", response_model=list[product.ProductWithoutProductItems])
 def get_products(db: Session = Depends(get_db)):
-    return db.query(models.Product).all()
+    return crud.get_products(db)
 
 
 @router.get("/{id}", response_model=product.ProductWithProductItems)
 def read_product(id: int, db: Session = Depends(get_db)):
-    product = db.query(models.Product).filter(models.Product.id == id).first()
-    if not product:
+    product = crud.read_product(id, db)
+    if product == None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"no product found with the given id {id}",
