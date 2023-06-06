@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from ..database.database import get_db
 from ..models import models
 from ..schemas import product
+from ..schemas.product import MeasurementUnitEnum
 
 router = APIRouter(prefix="/products", tags=["Product"])
 
@@ -12,8 +13,7 @@ router = APIRouter(prefix="/products", tags=["Product"])
 def create_product(product: product.ProductCreate, db: Session = Depends(get_db)):
     product_to_add = models.Product(
         name=product.name,
-        measure_unit=product.measure_unit,
-        selling_unit=product.selling_unit,
+        measurement_unit=product.measurement_unit,
         category_id=product.category_id,
     )
     db.add(product_to_add)

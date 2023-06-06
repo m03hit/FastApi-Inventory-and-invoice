@@ -7,11 +7,13 @@ from sqlalchemy import (
     String,
     Date,
     BigInteger,
+    Enum,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from ..database.database import Base
+from ..schemas.product import MeasurementUnitEnum
 
 
 class ProductCategory(Base):
@@ -50,8 +52,9 @@ class Product(Base):
     name = Column(String)
     total_quantity = Column(Float, default=0)
     total_value = Column(Float, default=0)
-    measure_unit = Column(String)
-    selling_unit = Column(String)
+    measurement_way_id = Column(Integer, ForeignKey("measurementways.id"))
+    measurement_way = relationship("MeasurementWay", back_populates="products")
+    measurement_unit = Column(Enum(MeasurementUnitEnum), nullable=False)
     category_id = Column(Integer, ForeignKey("product_categories.id"))
     product_category = relationship("ProductCategory", back_populates="products")
     product_items = relationship("ProductItem", back_populates="product")
@@ -199,3 +202,11 @@ class User(Base):
     updated_at = Column(
         TIMESTAMP(timezone=True), nullable=True, server_default=text("now()")
     )
+
+
+class MeasurementWay(Base):
+    __tablename__ = "measurementways"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    products = relationship("Product", back_populates="measurement_way")

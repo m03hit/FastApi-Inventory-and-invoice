@@ -1,6 +1,7 @@
 from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
+from ..schemas.product import MeasurementUnitEnum
 
 
 class CustomerBase(BaseModel):
@@ -29,7 +30,7 @@ class ProductBase(BaseModel):
     name: str
     total_quantity: float
     total_value: float
-    measure_unit: str
+    measurement_unit: MeasurementUnitEnum
     category_id: int
 
     class Config:

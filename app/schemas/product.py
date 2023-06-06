@@ -1,6 +1,12 @@
 from datetime import date, datetime
 from typing import List, Optional
 from pydantic import BaseModel
+from enum import Enum
+
+
+class MeasurementUnitEnum(str, Enum):
+    sqfeet = "sqfeet"
+    piece = "piece"
 
 
 class ProductCategoryBase(BaseModel):
@@ -39,8 +45,7 @@ class ProductBase(BaseModel):
     name: str
     total_quantity: float
     total_value: float
-    measure_unit: str
-    selling_unit: str
+    measurement_unit: MeasurementUnitEnum
     category_id: int
     created_at: datetime
     updated_at: datetime
@@ -73,6 +78,15 @@ class ProductWithoutProductItems(ProductBase):
     product_category: ProductCategoryBase
     product_images: list[ProductImageBase] = []
 
+    def dict(self, *args, **kwargs):
+        product_dict = super().dict(*args, **kwargs)
+        category_dict = self.product_category.__dict__
+        category_dict["product_category_id"] = category_dict.pop("id")
+        category_dict.pop("name")
+        product_dict.update(category_dict)
+        product_dict.pop("product_category")
+        return product_dict
+
     class Config:
         orm_mode = True
 
@@ -86,8 +100,7 @@ class ProductWithProductItems(ProductWithoutProductItems):
 
 class ProductCreate(BaseModel):
     name: str
-    measure_unit: str
-    selling_unit: str
+    measurement_unit: MeasurementUnitEnum
     category_id: int
     product_images: list[str]
 
