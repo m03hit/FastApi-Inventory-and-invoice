@@ -13,7 +13,7 @@ from ..repository import crud
 router = APIRouter(tags=["Authentication"])
 
 
-@router.post("/login", response_model=authSchema.Token)
+@router.post("/login")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db),
@@ -30,10 +30,18 @@ async def login_for_access_token(
 
     access_token_expires = timedelta(hours=20)
     access_token = oauth2.create_access_token(
-        data={"sub": user.user_name, "p_version": user.password_version},
+        data={
+            "sub": user.user_name,
+            "p_version": user.password_version,
+            "is_admin": user.is_admin,
+        },
         expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "is_admin": user.is_admin,
+    }
 
 
 @router.get("/users/me/", response_model=authSchema.User)

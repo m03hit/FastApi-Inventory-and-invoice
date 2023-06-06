@@ -8,7 +8,7 @@ from ..schemas import product
 router = APIRouter(prefix="/products", tags=["Product"])
 
 
-@router.post("/", response_model=product.ProductCreated)
+@router.post("/", response_model=product.ProductCreated, status_code=201)
 def create_product(product: product.ProductCreate, db: Session = Depends(get_db)):
     product_to_add = models.Product(
         name=product.name,
@@ -27,12 +27,12 @@ def create_product(product: product.ProductCreate, db: Session = Depends(get_db)
     )
 
 
-@router.get("/", response_model=list[product.Product])
+@router.get("/", response_model=list[product.ProductWithoutProductItems])
 def get_products(db: Session = Depends(get_db)):
     return db.query(models.Product).all()
 
 
-@router.get("/{id}", response_model=product.Product)
+@router.get("/{id}", response_model=product.ProductWithProductItems)
 def read_product(id: int, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id).first()
     if not product:

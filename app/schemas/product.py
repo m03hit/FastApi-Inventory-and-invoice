@@ -69,21 +69,17 @@ class ProductItemBase(BaseModel):
         orm_mode = True
 
 
-class Product(ProductBase):
+class ProductWithoutProductItems(ProductBase):
     product_category: ProductCategoryBase
-    product_items: list[ProductItemBase] = []
     product_images: list[ProductImageBase] = []
 
-    # def dict(self, *args, **kwargs):
-    #    # get the dictionary representation of the Product instance
-    #    product_dict = super().dict(*args, **kwargs)
-    #    # get the dictionary representation of the ProductCategoryBase instance
-    #    category_dict = self.product_category.__dict__
-    #    # merge the two dictionaries
-    #    product_dict.update(category_dict)
-    #    # remove the product_category key as it's already merged with the root level JSON object
-    #    product_dict.pop("product_category")
-    #    return product_dict
+    class Config:
+        orm_mode = True
+
+
+class ProductWithProductItems(ProductWithoutProductItems):
+    product_items: list[ProductItemBase] = []
+
     class Config:
         orm_mode = True
 

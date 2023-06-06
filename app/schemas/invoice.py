@@ -57,7 +57,6 @@ class InvoiceItemWithProductDetails(BaseModel):
     product_id: float
     invoice_id: float
     product: ProductBase
-    product_item: ProductItemBase
 
     class Config:
         orm_mode = True
@@ -72,11 +71,10 @@ class Invoice(InvoiceBase):
 
 
 class InvoiceItemCreate(BaseModel):
-    product_id: float
+    product_id: int
     quantity: float
     unit_price: float
     amount: float
-    product_item_id: float
 
     class Config:
         orm_mode = True
@@ -87,9 +85,8 @@ class InvoiceItemCreated(BaseModel):
     amount: float
     quantity: float
     unit_price: float
-    product_id: float
+    product_id: int
     product: ProductBase
-    product_item: ProductItemBase
 
     class Config:
         orm_mode = True
@@ -99,7 +96,6 @@ class InvoiceCreate(BaseModel):
     customer_id: int
     date: date
     amount: float
-    profit: float
     invoice_items: list[InvoiceItemCreate]
 
     class Config:

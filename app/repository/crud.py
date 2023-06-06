@@ -59,7 +59,7 @@ def create_invoice(db: Session, invoice: invoice.InvoiceCreate):
     db_invoice = models.Invoice(
         amount=invoice.amount,
         date=invoice.date,
-        profit=invoice.profit,
+        profit=0,
         customer_id=invoice.customer_id,
     )
     db.add(db_invoice)
@@ -80,7 +80,7 @@ def create_invoice_items(
                 quantity=item.quantity,
                 product_id=item.product_id,
                 invoice_id=invoice_id_int,
-                product_item_id=item.product_item_id,
+                product_item_id=1,
             )
         )
 
