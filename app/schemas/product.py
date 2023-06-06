@@ -9,6 +9,15 @@ class MeasurementUnitEnum(str, Enum):
     piece = "piece"
 
 
+class MeasurementWay(BaseModel):
+    id: int
+    name: str
+    description: str
+
+    class Config:
+        orm_mode = True
+
+
 class ProductCategoryBase(BaseModel):
     id: int
     name: str
@@ -93,6 +102,7 @@ class ProductWithoutProductItems(ProductBase):
 
 class ProductWithProductItems(ProductWithoutProductItems):
     product_items: list[ProductItemBase] = []
+    measurement_way: MeasurementWay
 
     class Config:
         orm_mode = True
@@ -101,6 +111,7 @@ class ProductWithProductItems(ProductWithoutProductItems):
 class ProductCreate(BaseModel):
     name: str
     measurement_unit: MeasurementUnitEnum
+    measurement_way_id: int
     category_id: int
     product_images: list[str]
 
@@ -110,6 +121,7 @@ class ProductCreate(BaseModel):
 
 class ProductCreated(ProductCreate):
     id: int
+    measurement_way: MeasurementWay
     product_images: list[ProductImageBase]
 
     class Config:

@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..models import models
-from ..schemas import customer, invoice
+from ..schemas import customer, invoice, productcategory
 
 
 ##### CUSTOMERS #######
@@ -42,6 +42,48 @@ def delete_customer(db: Session, id: int):
     customer.delete(synchronize_session=False)
     db.commit()
     return "done"
+
+
+# Category
+
+
+def does_category_exists(db: Session, id: int):
+    category = (
+        db.query(models.ProductCategory).filter(models.ProductCategory.id == id).first()
+    )
+    if not category:
+        return False
+    return True
+
+
+def create_category(db: Session, category: productcategory.ProductCategoryCreate):
+    p_category = models.ProductCategory(name=category.name)
+    db.add(p_category)
+    db.commit()
+    db.refresh(p_category)
+    return p_category
+
+
+def get_product_categories(db: Session):
+    return db.query(models.ProductCategory).all()
+
+
+def get_product_category(id: int, db: Session):
+    product_category = (
+        db.query(models.ProductCategory).filter(models.ProductCategory.id == id).first()
+    )
+    if not product_category:
+        return -1
+    return product_category
+
+
+def does_measurement_way_exists(db: Session, id: int):
+    measurement_way = (
+        db.query(models.MeasurementWay).filter(models.MeasurementWay.id == id).first()
+    )
+    if not measurement_way:
+        return False
+    return True
 
 
 # Invoice #######
