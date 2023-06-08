@@ -18,6 +18,14 @@ class ProductImage(ProductImageBase):
         orm_mode = True
 
 
+class ProductImagesCreate(BaseModel):
+    product_id: int
+    urls: list[str]
+
+    class Config:
+        orm_mode = True
+
+
 from ..schemas.product import ProductBase
 
 

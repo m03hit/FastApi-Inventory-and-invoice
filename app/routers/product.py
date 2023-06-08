@@ -29,12 +29,13 @@ def create_product(product: product.ProductCreate, db: Session = Depends(get_db)
         raise HTTPException(
             status_code=500, detail="Some error occurred while adding product"
         )
-    for image_url in product.product_images:
-        image_created = crud.create_image(product_to_add.id, db, image_url)
-        if image_created == None:
-            raise HTTPException(
-                status_code=500, detail="Some error occurred while adding product photo"
-            )
+    crud.create_images(product_to_add.id, db, product.product_images)
+    # for image_url in product.product_images:
+    #     image_created = crud.create_image(product_to_add.id, db, image_url)
+    #     if image_created == None:
+    #         raise HTTPException(
+    #             status_code=500, detail="Some error occurred while adding product photo"
+    #         )
 
     product_to_return = crud.read_product(product_to_add.id, db)
     if product_to_return is not None:

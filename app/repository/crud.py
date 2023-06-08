@@ -204,12 +204,15 @@ def read_purchases(db: Session):
 ## images
 
 
-def create_image(p_id: int, db: Session, img_url: str):
-    image = models.ProductImage(image_url=img_url, product_id=p_id)
-    db.add(image)
-    db.commit()
-    db.refresh(image)
-    return image
+def create_images(p_id: int, db: Session, img_urls: list[str]):
+    product_image_model_list = []
+    for i_url in img_urls:
+        image = models.ProductImage(image_url=i_url, product_id=p_id)
+        product_image_model_list.append(image)
+
+    db.add_all(product_image_model_list)
+    a = db.commit()
+    print(a)
 
 
 def read_image(id: int, db: Session):
