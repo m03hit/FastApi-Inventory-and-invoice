@@ -74,7 +74,7 @@ class ProductItem(Base):
     unit_price = Column(Float)
     effective_unit_price = Column(Float)
     total_value = Column(Float)
-    date_purchased = Column(Date)
+    date_purchased = Column(Date, nullable=False, server_default=text("now()"))
     quantity = Column(Float)
     purchase_id = Column(Integer, ForeignKey("purchases.id"))
     created_at = Column(
@@ -120,7 +120,7 @@ class Supplier(Base):
 class Purchase(Base):
     __tablename__ = "purchases"
     id = Column(Integer, primary_key=True, index=True)
-    date = Column(Date)
+    date = Column(Date, nullable=False, server_default=text("now()"))
     title = Column(String)
     amount = Column(String, default=0)
     supplier_id = Column(Integer, ForeignKey("suppliers.id"))
@@ -155,7 +155,7 @@ class Invoice(Base):
     __tablename__ = "invoices"
     id = Column(Integer, primary_key=True, index=True)
     amount = Column(Float)
-    date = Column(Date)
+    date = Column(Date, nullable=False, server_default=text("now()"))
     profit = Column(Float)
     customer_id = Column(Integer, ForeignKey("customers.id"))
     customer = relationship("Customer", back_populates="invoices")

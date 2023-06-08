@@ -10,11 +10,11 @@ router = APIRouter(prefix="/productcategories", tags=["Product Category"])
 
 @router.post(
     "/",
-    response_model=productcategory.ProductCategoryBase,
+    response_model=productcategory.ProductCategory,
     status_code=status.HTTP_201_CREATED,
 )
 def create_product_category(
-    category: productcategory.ProductCategoryCreate, db: Session = Depends(get_db)
+    category: productcategory.ProductCategoryBase, db: Session = Depends(get_db)
 ):
     product_category = crud.create_category(db, category)
     if product_category.id > 0:
@@ -30,7 +30,7 @@ def get_product_categories(db: Session = Depends(get_db)):
     return crud.get_product_categories(db)
 
 
-@router.get("/{id}", response_model=productcategory.ProductCategory)
+@router.get("/{id}", response_model=productcategory.ProductCategoryWithProducts)
 def get_product_category(id: int, db: Session = Depends(get_db)):
     product_category = crud.get_product_category(id, db)
 

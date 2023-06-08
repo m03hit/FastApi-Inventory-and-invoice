@@ -9,10 +9,8 @@ from ..repository import crud
 router = APIRouter(prefix="/suppliers", tags=["Supplier"])
 
 
-@router.post(
-    "/", response_model=supplier.SupplierBase, status_code=status.HTTP_201_CREATED
-)
-def create_supplier(supplier: supplier.Supplier, db: Session = Depends(get_db)):
+@router.post("/", response_model=supplier.Supplier, status_code=status.HTTP_201_CREATED)
+def create_supplier(supplier: supplier.SupplierBase, db: Session = Depends(get_db)):
     existing_supplier = crud.get_supplier_by_mobile_no(supplier.mobile, db)
     if existing_supplier:
         raise HTTPException(

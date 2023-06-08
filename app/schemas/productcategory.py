@@ -2,23 +2,18 @@ from datetime import date, datetime
 from typing import List, Optional
 from pydantic import BaseModel
 from ..schemas.product import MeasurementUnitEnum
+from ..schemas import product
 
 
-class ProductBase(BaseModel):
-    id: int
+class ProductCategoryBase(BaseModel):
     name: str
-    total_quantity: float
-    total_value: float
-    measurement_unit: MeasurementUnitEnum
-    category_id: int
 
     class Config:
         orm_mode = True
 
 
-class ProductCategoryBase(BaseModel):
+class ProductCategory(ProductCategoryBase):
     id: int
-    name: str
     created_at: datetime
     updated_at: datetime
 
@@ -26,15 +21,8 @@ class ProductCategoryBase(BaseModel):
         orm_mode = True
 
 
-class ProductCategory(ProductCategoryBase):
-    products: list[ProductBase] = []
-
-    class Config:
-        orm_mode = True
-
-
-class ProductCategoryCreate(BaseModel):
-    name: str
+class ProductCategoryWithProducts(ProductCategory):
+    products: list[product.ProductBase] = []
 
     class Config:
         orm_mode = True

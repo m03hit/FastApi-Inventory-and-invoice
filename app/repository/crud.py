@@ -64,7 +64,7 @@ def does_category_exists(db: Session, id: int):
     return True
 
 
-def create_category(db: Session, category: productcategory.ProductCategoryCreate):
+def create_category(db: Session, category: productcategory.ProductCategoryBase):
     p_category = models.ProductCategory(name=category.name)
     db.add(p_category)
     db.commit()
