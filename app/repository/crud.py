@@ -10,6 +10,8 @@ from ..schemas import (
     productimage,
     product,
     purchase,
+    purchaseexpense,
+    productitem,
 )
 
 
@@ -196,6 +198,72 @@ def read_purchase(id: int, db: Session):
 
 def read_purchases(db: Session):
     return db.query(models.Purchase).all()
+
+
+def create_purchase(purchase: purchase.PurchaseCreate, db: Session):
+    purchase_to_add = models.Purchase(
+        date=purchase.date,
+        title=purchase.title,
+        amount=purchase.amount,
+        supplier_id=purchase.supplier_id,
+    )
+    db.add(purchase_to_add)
+    db.commit()
+    db.refresh(purchase_to_add)
+    return purchase_to_add
+
+
+# Purchase Expenses
+
+
+def create_purchase_expenses(
+    purchase_id: int, expenses: list[purchaseexpense.PurchaseExpenseBase], db: Session
+):
+    expenses_list_model = []
+    for expense in expenses:
+        expenses_list_model.append(
+            models.PurchaseExpense(
+                purchase_id=purchase_id,
+                amount=expense.amount,
+                title=expense.title,
+                description=expense.description,
+            )
+        )
+    db.add_all(expenses_list_model)
+    db.commit()
+
+
+def read_purchase_expense(id: int, db: Session):
+    return (
+        db.query(models.PurchaseExpense).filter(models.PurchaseExpense.id == id).first()
+    )
+
+
+def read_purchase_expenses(db: Session):
+    return db.query(models.PurchaseExpense).all()
+
+
+## Product Items
+
+
+def create_product_items(
+    product_items: list[productitem.ProductItemBase], purchase_id: int, db: Session
+):
+    product_item_list_model = []
+    for p_item in product_items:
+        product_item_list_model.append(
+            models.PurchaseExpense(
+                unit_price=p_item.unit_price,
+                effective_unit_price=p_item.effective_unit_price,
+                total_value=p_item.total_value,
+                date_purchased=p_item.date_purchased,
+                quantity=p_item.quantity,
+                purchase_id=purchase_id,
+                product_id=p_item.product_id,
+            )
+        )
+    db.add_all(product_item_list_model)
+    db.commit()
 
 
 # def create_purchase(purchase:purchase.PurchaseCreate,db:Session):
