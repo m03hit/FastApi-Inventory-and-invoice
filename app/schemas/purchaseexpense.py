@@ -4,8 +4,7 @@ from pydantic import BaseModel
 
 
 class PurchaseBase(BaseModel):
-    id: int
-    date: date
+    date: Optional[date]
     title: str
     amount: float
     supplier_id: float
@@ -15,17 +14,23 @@ class PurchaseBase(BaseModel):
 
 
 class PurchaseExpenseBase(BaseModel):
-    id: int
     amount: float
     title: str
     description: str
-    purchase_id: str
 
     class Config:
         orm_mode = True
 
 
 class PurchaseExpense(PurchaseExpenseBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class PurchaseExpenseWithPurchase(PurchaseExpense):
+    id: int
     purchase: PurchaseBase
 
     class Config:

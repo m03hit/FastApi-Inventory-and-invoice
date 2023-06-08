@@ -3,6 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
+######## move it
 class PurchaseBase(BaseModel):
     id: int
     date: date
@@ -15,7 +16,6 @@ class PurchaseBase(BaseModel):
 
 
 class SupplierBase(BaseModel):
-    id: int
     name: str
     mobile: int
 
@@ -24,15 +24,14 @@ class SupplierBase(BaseModel):
 
 
 class Supplier(SupplierBase):
-    supplier_purchases: list[PurchaseBase] = []
+    id: int
 
     class Config:
         orm_mode = True
 
 
-class SupplierCreate(BaseModel):
-    name: str
-    mobile: int
+class SupplierWithPurchases(Supplier):
+    supplier_purchases: list[PurchaseBase] = []
 
     class Config:
         orm_mode = True

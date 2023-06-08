@@ -9,7 +9,7 @@ class PurchaseBase(BaseModel):
     date: Optional[date]
     title: str
     amount: float
-    supplier_id: int
+    supplier_id: float
 
     class Config:
         orm_mode = True

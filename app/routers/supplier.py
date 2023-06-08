@@ -12,12 +12,18 @@ router = APIRouter(prefix="/suppliers", tags=["Supplier"])
 @router.post(
     "/", response_model=supplier.SupplierBase, status_code=status.HTTP_201_CREATED
 )
-def create_supplier(supplier: supplier.SupplierCreate, db: Session = Depends(get_db)):
+def create_supplier(supplier: supplier.Supplier, db: Session = Depends(get_db)):
+    existing_supplier = crud.get_supplier_by_mobile_no(supplier.mobile, db)
+    if existing_supplier:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Supplier already exists with mobile number {supplier.mobile}",
+        )
     created_supplier = crud.create_supplier(supplier, db)
-    if created_supplier.id > 0:
-        return created_supplier
-    else:
+
+    if not created_supplier:
         raise HTTPException(status_code=500, detail="Something went wrong")
+    return created_supplier
 
 
 @router.get("/", response_model=list[supplier.Supplier])

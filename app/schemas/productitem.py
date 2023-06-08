@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from ..schemas.product import MeasurementUnitEnum
 
 
+# date auto or manual , should even be included ?
+
+
 class ProductBase(BaseModel):
     id: int
     name: str
@@ -17,11 +20,9 @@ class ProductBase(BaseModel):
 
 
 class ProductItemBase(BaseModel):
-    id: int
     unit_price: float
     effective_unit_price: float
     total_value: float
-    date_purchased: date
     quantity: float
     product_id: int
 
@@ -30,6 +31,14 @@ class ProductItemBase(BaseModel):
 
 
 class ProductItem(ProductItemBase):
+    id: int
+    date_purchased: Optional[date]
+
+    class Config:
+        orm_mode = True
+
+
+class ProductItemWithProduct(ProductItem):
     product: ProductBase
 
     class Config:

@@ -9,6 +9,7 @@ from ..schemas import (
     supplier,
     productimage,
     product,
+    purchase,
 )
 
 
@@ -140,7 +141,7 @@ def create_invoice_items(
 ## Supplier
 
 
-def create_supplier(supplier: supplier.SupplierCreate, db: Session):
+def create_supplier(supplier: supplier.SupplierBase, db: Session):
     create_supplier = models.Supplier(name=supplier.name, mobile=supplier.mobile)
     db.add(create_supplier)
     db.commit()
@@ -155,6 +156,10 @@ def get_suppliers(db: Session):
 def get_supplier(id: int, db: Session):
     supplier = db.query(models.Supplier).filter(models.Supplier.id == id).first()
     return supplier
+
+
+def get_supplier_by_mobile_no(mobile: int, db: Session):
+    return db.query(models.Supplier).filter(models.Supplier.mobile == mobile).first()
 
 
 ## Products
@@ -188,3 +193,17 @@ def get_products(db: Session):
 def read_product(id: int, db: Session):
     product = db.query(models.Product).filter(models.Product.id == id).first()
     return product
+
+
+# Purchases
+
+
+def read_purchase(id: int, db: Session):
+    return db.query(models.Purchase).filter(models.Purchase.id == id).first()
+
+
+def read_purchases(db: Session):
+    return db.query(models.Purchase).all()
+
+
+# def create_purchase(purchase:purchase.PurchaseCreate,db:Session):

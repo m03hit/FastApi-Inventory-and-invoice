@@ -2,13 +2,31 @@ from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from ..database.database import get_db
 from ..models import models
-from ..schemas import purchase
+from ..schemas import purchase, baseSchema
+from ..repository import crud
+
 
 router = APIRouter(prefix="/purchases", tags=["Product Purchase"])
 
 
 @router.post("/", response_model=purchase.Purchase, status_code=status.HTTP_201_CREATED)
 def create_purchase(purchase: purchase.PurchaseCreate, db: Session = Depends(get_db)):
+    supplier = crud.get_supplier(purchase.supplier_id, db)
+
+    if not supplier:
+        raise HTTPException(
+            status_code=404,
+            detail=f"""no supplier exists with id {purchase.supplier_id} ,please add a new supplier before proceeding forward""",
+        )
+
+    for product_item in purchase.products:
+        product_exists_or_not = crud.read_product(product_item.product_id, db)
+        if not product_exists_or_not:
+            raise HTTPException(
+                status_code=404,
+                detail=f"""no product found with id {product_item.product_id}, please add the product first """,
+            )
+
     base_purchase = purchase
     added_Purchase = models.Purchase(
         date=purchase.date,
@@ -35,7 +53,6 @@ def create_purchase(purchase: purchase.PurchaseCreate, db: Session = Depends(get
             models.ProductItem(
                 unit_price=product_item.unit_price,
                 effective_unit_price=product_item.effective_unit_price,
-                date_purchased=product_item.date_purchased,
                 quantity=product_item.quantity,
                 product_id=product_item.product_id,
                 purchase_id=added_Purchase.id,
@@ -50,9 +67,9 @@ def create_purchase(purchase: purchase.PurchaseCreate, db: Session = Depends(get
     )
 
 
-@router.get("/{id}", response_model=purchase.Purchase)
+@router.get("/{id}", response_model=purchase.PurchaseWithProductsAndExpenses)
 def read_purchase(id: int, db: Session = Depends(get_db)):
-    purchase = db.query(models.Purchase).filter(models.Purchase.id == id).first()
+    purchase = crud.read_purchase(id, db)
     if not purchase:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -63,4 +80,4 @@ def read_purchase(id: int, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=list[purchase.Purchase])
 def read_purchases(db: Session = Depends(get_db)):
-    return db.query(models.Purchase).all()
+    return crud.read_purchases(db)
