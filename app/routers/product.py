@@ -4,13 +4,13 @@ from sqlalchemy.orm import Session
 from ..database.database import get_db
 from ..models import models
 from ..schemas import product
-from ..schemas.product import MeasurementUnitEnum
+from ..schemas.baseSchema import MeasurementUnitEnum
 from ..repository import crud
 
 router = APIRouter(prefix="/products", tags=["Product"])
 
 
-@router.post("/", response_model=product.ProductCreated, status_code=201)
+@router.post("/", response_model=product.Product, status_code=201)
 def create_product(product: product.ProductCreate, db: Session = Depends(get_db)):
     if crud.does_category_exists(db, product.category_id) == False:
         raise HTTPException(
@@ -45,7 +45,7 @@ def create_product(product: product.ProductCreate, db: Session = Depends(get_db)
         )
 
 
-@router.get("/", response_model=list[product.ProductWithoutProductItems])
+@router.get("/", response_model=list[product.ProductWithProductImages])
 def get_products(db: Session = Depends(get_db)):
     return crud.get_products(db)
 

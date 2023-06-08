@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from ..database.database import Base
-from ..schemas.product import MeasurementUnitEnum
+from ..schemas.baseSchema import MeasurementUnitEnum
 
 
 class ProductCategory(Base):

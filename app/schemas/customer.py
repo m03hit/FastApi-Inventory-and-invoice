@@ -3,19 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-class InvoiceBase(BaseModel):
-    id: int
-    amount: float
-    date: date
-    profit: float
-    customer_id: int
-
-    class Config:
-        orm_mode = True
-
-
 class CustomerBase(BaseModel):
-    id: int
     name: str
     mobile: int
     address: str
@@ -25,16 +13,17 @@ class CustomerBase(BaseModel):
 
 
 class Customer(CustomerBase):
-    invoices: list[InvoiceBase] = []
+    id: int
 
     class Config:
         orm_mode = True
 
 
-class CreateCustomer(BaseModel):
-    name: str
-    mobile: int
-    address: str
+from ..schemas import invoice
+
+
+class CustomerWithInvoices(Customer):
+    invoices: list[invoice.Invoice] = []
 
     class Config:
         orm_mode = True

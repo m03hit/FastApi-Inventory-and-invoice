@@ -1,23 +1,9 @@
 from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
-from ..schemas.product import MeasurementUnitEnum
-
-
-class ProductBase(BaseModel):
-    id: int
-    name: str
-    # total_quantity: float
-    # total_value: float
-    measurement_unit: MeasurementUnitEnum
-    category_id: int
-
-    class Config:
-        orm_mode = True
 
 
 class ProductImageBase(BaseModel):
-    id: int
     image_url: str
     product_id: int
 
@@ -26,23 +12,16 @@ class ProductImageBase(BaseModel):
 
 
 class ProductImage(ProductImageBase):
-    product: ProductBase
-
-    class Config:
-        orm_mode = True
-
-
-class ProductImageCreate(BaseModel):
-    image_url: str
-    product_id: int
-
-    class Config:
-        orm_mode = True
-
-
-class ProductImageCreated(BaseModel):
     id: int
-    image_url: str
+
+    class Config:
+        orm_mode = True
+
+
+from ..schemas.product import ProductBase
+
+
+class ProductImageWithProduct(ProductImage):
     product: ProductBase
 
     class Config:

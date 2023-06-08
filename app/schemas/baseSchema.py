@@ -1,39 +1,18 @@
 from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
-from ..schemas import supplier
-from ..schemas import productitem, purchaseexpense
+from enum import Enum
 
 
-class PurchaseBase(BaseModel):
-    date: Optional[date]
-    title: str
-    amount: float
-    supplier_id: float
-
-    class Config:
-        orm_mode = True
+class MeasurementUnitEnum(str, Enum):
+    sqfeet = "sqfeet"
+    piece = "piece"
 
 
-class Purchase(PurchaseBase):
+class MeasurementWay(BaseModel):
     id: int
-
-    class Config:
-        orm_mode = True
-
-
-class PurchaseWithProductsAndExpenses(Purchase):
-    supplier: supplier.Supplier
-    products: list[productitem.ProductItem] = []
-    purchase_expenses: list[purchaseexpense.PurchaseExpense] = []
-
-    class Config:
-        orm_mode = True
-
-
-class PurchaseCreate(PurchaseBase):
-    products: list[productitem.ProductItemBase]
-    purchase_expenses: list[purchaseexpense.PurchaseExpenseBase]
+    name: str
+    description: str
 
     class Config:
         orm_mode = True

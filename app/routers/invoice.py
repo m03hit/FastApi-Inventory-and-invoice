@@ -29,10 +29,8 @@ def read_invoices(id: int, db: Session = Depends(get_db)):
     return invoice
 
 
-@router.post(
-    "/", status_code=status.HTTP_201_CREATED, response_model=invoice.InvoiceCreated
-)
-def create_invoice(invoice: invoice.InvoiceCreate, db: Session = Depends(get_db)):
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=invoice.Invoice)
+def create_invoice(invoice: invoice.InvoiceBase, db: Session = Depends(get_db)):
     customer = crud.get_customer(db, invoice.customer_id)
     if not customer:
         raise HTTPException(

@@ -1,7 +1,6 @@
 from datetime import date, datetime
 from typing import List, Optional
 from pydantic import BaseModel
-from ..schemas.product import MeasurementUnitEnum
 from ..schemas import product
 
 

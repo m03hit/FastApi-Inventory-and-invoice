@@ -8,10 +8,8 @@ from ..schemas import customer
 router = APIRouter(prefix="/customers", tags=["Customer"])
 
 
-@router.post(
-    "/", response_model=customer.CustomerBase, status_code=status.HTTP_201_CREATED
-)
-def create_customer(user: customer.CreateCustomer, db: Session = Depends(get_db)):
+@router.post("/", response_model=customer.Customer, status_code=status.HTTP_201_CREATED)
+def create_customer(user: customer.CustomerBase, db: Session = Depends(get_db)):
     db_user = crud.get_customer_by_mobile(db, user.mobile)
 
     if db_user:
@@ -22,7 +20,7 @@ def create_customer(user: customer.CreateCustomer, db: Session = Depends(get_db)
     return crud.create_customer(db=db, user=user)
 
 
-@router.get("/{id}", response_model=customer.CustomerBase)
+@router.get("/{id}", response_model=customer.Customer)
 def read_customer(id: int, db: Session = Depends(get_db)):
     db_customer = crud.get_customer(db, id)
     if not db_customer:
@@ -34,7 +32,7 @@ def read_customer(id: int, db: Session = Depends(get_db)):
     return db_customer
 
 
-@router.get("/", response_model=list[customer.CustomerBase])
+@router.get("/", response_model=list[customer.Customer])
 def read_customers(db: Session = Depends(get_db)):
     return crud.get_customers(db=db)
 

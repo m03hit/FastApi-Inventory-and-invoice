@@ -24,7 +24,7 @@ def get_customer(db: Session, id: int):
     return db.query(models.Customer).filter(models.Customer.id == id).first()
 
 
-def create_customer(db: Session, user: customer.CreateCustomer):
+def create_customer(db: Session, user: customer.CustomerBase):
     db_customer = models.Customer(
         name=user.name, mobile=user.mobile, address=user.address
     )
@@ -105,7 +105,7 @@ def get_invoices(db: Session):
     return db.query(models.Invoice).all()
 
 
-def create_invoice(db: Session, invoice: invoice.InvoiceCreate):
+def create_invoice(db: Session, invoice: invoice.InvoiceBase):
     db_invoice = models.Invoice(
         amount=invoice.amount,
         date=invoice.date,
@@ -119,7 +119,7 @@ def create_invoice(db: Session, invoice: invoice.InvoiceCreate):
 
 
 def create_invoice_items(
-    db: Session, invoice: invoice.InvoiceCreate, invoice_id_int: int
+    db: Session, invoice: invoice.InvoiceBase, invoice_id_int: int
 ):
     print(invoice.invoice_items)
     for item in invoice.invoice_items:
@@ -178,14 +178,6 @@ def create_product(product: product.ProductCreate, db: Session):
     return product_to_add
 
 
-def create_image(p_id: int, db: Session, img_url: str):
-    image = models.ProductImage(image_url=img_url, product_id=p_id)
-    db.add(image)
-    db.commit()
-    db.refresh(image)
-    return image
-
-
 def get_products(db: Session):
     return db.query(models.Product).all()
 
@@ -207,3 +199,22 @@ def read_purchases(db: Session):
 
 
 # def create_purchase(purchase:purchase.PurchaseCreate,db:Session):
+
+
+## images
+
+
+def create_image(p_id: int, db: Session, img_url: str):
+    image = models.ProductImage(image_url=img_url, product_id=p_id)
+    db.add(image)
+    db.commit()
+    db.refresh(image)
+    return image
+
+
+def read_image(id: int, db: Session):
+    return db.query(models.ProductImage).filter(models.ProductImage.id == id).first()
+
+
+def read_images(db: Session):
+    return db.query(models.ProductImage).all()

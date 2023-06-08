@@ -1,61 +1,23 @@
 from datetime import date, datetime
 from typing import List, Optional
 from pydantic import BaseModel
-from enum import Enum
-
-
-class MeasurementUnitEnum(str, Enum):
-    sqfeet = "sqfeet"
-    piece = "piece"
-
-
-class MeasurementWay(BaseModel):
-    id: int
-    name: str
-    description: str
-
-    class Config:
-        orm_mode = True
-
-
-class ProductCategoryBase(BaseModel):
-    id: int
-    name: str
-
-    class Config:
-        orm_mode = True
-
-
-class InvoiceItemBase(BaseModel):
-    id: int
-    amount: float
-    quantity: float
-    unit_price: float
-    product_id: float
-    invoice_id: float
-
-    class Config:
-        orm_mode = True
-
-
-class PurchaseBase(BaseModel):
-    id: int
-    date: date
-    title: str
-    amount: float
-    supplier_id: float
-
-    class Config:
-        orm_mode = True
+from ..schemas.baseSchema import MeasurementUnitEnum
 
 
 class ProductBase(BaseModel):
-    id: int
     name: str
-    total_quantity: float
-    total_value: float
+    measurement_way_id: int
     measurement_unit: MeasurementUnitEnum
     category_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class Product(ProductBase):
+    id: int
+    total_quantity: float
+    total_value: float
     created_at: datetime
     updated_at: datetime
 
@@ -63,66 +25,35 @@ class ProductBase(BaseModel):
         orm_mode = True
 
 
-class ProductImageBase(BaseModel):
-    image_url: str
-
-    class Config:
-        orm_mode = True
+from ..schemas import productimage, productitem
 
 
-class ProductItemBase(BaseModel):
-    id: int
-    unit_price: float
-    effective_unit_price: float
-    total_value: float
-    date_purchased: date
-    quantity: float
-    product_id: int
-
-    class Config:
-        orm_mode = True
-
-
-class ProductWithoutProductItems(ProductBase):
-    product_category: ProductCategoryBase
-    product_images: list[ProductImageBase] = []
-
-    def dict(self, *args, **kwargs):
-        product_dict = super().dict(*args, **kwargs)
-        category_dict = self.product_category.__dict__
-        category_dict["product_category_id"] = category_dict.pop("id")
-        category_dict.pop("name")
-        product_dict.update(category_dict)
-        product_dict.pop("product_category")
-        return product_dict
-
-    class Config:
-        orm_mode = True
-
-
-class ProductWithProductItems(ProductWithoutProductItems):
-    product_items: list[ProductItemBase] = []
-    measurement_way: MeasurementWay
-
-    class Config:
-        orm_mode = True
-
-
-class ProductCreate(BaseModel):
-    name: str
-    measurement_unit: MeasurementUnitEnum
-    measurement_way_id: int
-    category_id: int
+class ProductCreate(ProductBase):
     product_images: list[str]
 
     class Config:
         orm_mode = True
 
 
-class ProductCreated(ProductCreate):
-    id: int
-    measurement_way: MeasurementWay
-    product_images: list[ProductImageBase]
+class ProductWithProductImages(Product):
+    product_images: list[productimage.ProductImage]
 
     class Config:
         orm_mode = True
+
+
+class ProductWithProductItems(ProductWithProductImages):
+    product_items: list[productitem.ProductItem] = []
+
+    class Config:
+        orm_mode = True
+
+
+# def dict(self, *args, **kwargs):
+#     product_dict = super().dict(*args, **kwargs)
+#     category_dict = self.product_category.__dict__
+#     category_dict["product_category_id"] = category_dict.pop("id")
+#     category_dict.pop("name")
+#     product_dict.update(category_dict)
+#     product_dict.pop("product_category")
+#     return product_dict
