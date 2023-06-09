@@ -123,7 +123,6 @@ def create_invoice(db: Session, invoice: invoice.InvoiceBase):
 def create_invoice_items(
     db: Session, invoice: invoice.InvoiceBase, invoice_id_int: int
 ):
-    print(invoice.invoice_items)
     for item in invoice.invoice_items:
         db.add(
             models.InvoiceItem(
@@ -280,7 +279,6 @@ def create_images(p_id: int, db: Session, img_urls: list[str]):
 
     db.add_all(product_image_model_list)
     a = db.commit()
-    print(a)
 
 
 def read_image(id: int, db: Session):
