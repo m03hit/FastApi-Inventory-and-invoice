@@ -24,6 +24,12 @@ class InvoiceCreate(InvoiceBase):
 
 class Invoice(InvoiceBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class InvoiceWithInvoiceItems(Invoice):
     invoice_items: list[invoiceitem.InvoiceItem]
 
     class Config:

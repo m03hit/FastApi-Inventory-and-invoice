@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-
+from sqlalchemy import func
+from sqlalchemy import update
 from ..models import models
 from ..schemas import (
     customer,
@@ -12,6 +13,7 @@ from ..schemas import (
     purchase,
     purchaseexpense,
     productitem,
+    invoiceitem,
 )
 
 
@@ -120,23 +122,37 @@ def create_invoice(db: Session, invoice: invoice.InvoiceBase):
     return db_invoice
 
 
-def create_invoice_items(
-    db: Session, invoice: invoice.InvoiceBase, invoice_id_int: int
-):
-    for item in invoice.invoice_items:
-        db.add(
-            models.InvoiceItem(
-                amount=item.amount,
-                unit_price=item.unit_price,
-                quantity=item.quantity,
-                product_id=item.product_id,
-                invoice_id=invoice_id_int,
-                product_item_id=1,
-            )
+def create_invoice_items(db: Session, invoice_items: list[invoiceitem.InvoiceItemBase]):
+    for i_item in invoice_items:
+        db.add(i_item)
+        print(i_item.__dict__)
+        current_stock = (
+            db.query(models.ProductItem.quantity)
+            .filter(models.ProductItem.id == i_item.product_item_id)
+            .scalar()
         )
+        stmt = (
+            update(models.ProductItem)
+            .where(models.ProductItem.id == i_item.product_item_id)
+            .values(quantity=current_stock - i_item.quantity)
+        )
+        db.execute(stmt)
+    db.commit()
+    # db.add_all(invoice_items)
+    # db.commit()
+    # for item in invoice.invoice_items:
+    #     db.add(
+    #         models.InvoiceItem(
+    #             amount=item.amount,
+    #             unit_price=item.unit_price,
+    #             quantity=item.quantity,
+    #             product_id=item.product_id,
+    #             invoice_id=invoice_id_int,
+    #             product_item_id=1,
+    #         )
+    #     )
 
     # db.add_all(invoice.invoice_items)
-    db.commit()
 
 
 ## Supplier
@@ -251,10 +267,10 @@ def create_product_items(
     product_item_list_model = []
     for p_item in product_items:
         product_item_list_model.append(
-            models.PurchaseExpense(
+            models.ProductItem(
                 unit_price=p_item.unit_price,
                 effective_unit_price=p_item.effective_unit_price,
-                total_value=p_item.total_value,
+                total_value=p_item.effective_unit_price * p_item.quantity,
                 date_purchased=p_item.date_purchased,
                 quantity=p_item.quantity,
                 purchase_id=purchase_id,
@@ -265,7 +281,60 @@ def create_product_items(
     db.commit()
 
 
+def update_total_quantity(product_ids: list[int], db: Session):
+    for pid in product_ids:
+        total_product_quantity = (
+            db.query(func.sum(models.ProductItem.quantity))
+            .filter(models.ProductItem.product_id == pid)
+            .scalar()
+        )
+        total_product_quantity = total_product_quantity or 0
+        print(f"productid {pid}", total_product_quantity)
+        stmt = (
+            update(models.Product)
+            .where(models.Product.id == pid)
+            .values(total_quantity=total_product_quantity)
+        )
+        db.execute(stmt)
+        db.commit()
+        # stmt = (
+        #     update(models.Product)
+        #     .where(models.Product.id == pid)
+        #     .values(total_quantity=total_product_quantity)
+        # )
+        # db.query(models.Product).filter(models.Product.id == id).update(
+        #    {"total_quantity": total_product_quantity}
+        # )
+        # db.commit()
+
+
 # def create_purchase(purchase:purchase.PurchaseCreate,db:Session):
+
+
+def update_total_value_in_product_and_items(db: Session):
+    updateitemvalue = update(models.ProductItem).values(
+        total_value=models.ProductItem.quantity
+        * models.ProductItem.effective_unit_price
+    )
+    db.execute(updateitemvalue)
+    db.commit()
+
+    all_products = db.query(models.Product).all()
+
+    for product in all_products:
+        product_value = (
+            db.query(func.sum(models.ProductItem.total_value))
+            .filter(models.ProductItem.product_id == product.id)
+            .scalar()
+        )
+        product_value = product_value or 0
+        stmt = (
+            update(models.Product)
+            .where(models.Product.id == product.id)
+            .values(total_value=product_value)
+        )
+        db.execute(stmt)
+    db.commit()
 
 
 ## images
@@ -287,3 +356,23 @@ def read_image(id: int, db: Session):
 
 def read_images(db: Session):
     return db.query(models.ProductImage).all()
+
+
+def get_total_quantity_of_product(product_id: int, db: Session):
+    return (
+        db.query(models.Product.total_quantity)
+        .filter(models.Product.id == product_id)
+        .scalar()
+    )
+
+
+# ProductItems
+
+
+def read_product_items_by_p_id(product_id: int, db: Session):
+    return (
+        db.query(models.ProductItem)
+        .filter(models.ProductItem.product_id == product_id)
+        .order_by(models.ProductItem.id)
+        .all()
+    )

@@ -27,7 +27,7 @@ def create_purchase(purchase: purchase.PurchaseCreate, db: Session = Depends(get
                 detail=f"""no product found with id {product_item.product_id}, please add the product first """,
             )
 
-    if len(purchase.products):
+    if len(purchase.products) == 0:
         raise HTTPException(
             status_code=422, detail="can't create purchase without any product/s"
         )
@@ -38,29 +38,11 @@ def create_purchase(purchase: purchase.PurchaseCreate, db: Session = Depends(get
             status_code=500, detail="Something went wrong, Please Try again"
         )
     crud.create_purchase_expenses(added_Purchase.id, purchase.purchase_expenses, db)
-    # for expense in base_purchase.purchase_expenses:
-    #     db.add(
-    #         models.PurchaseExpense(
-    #             amount=expense.amount,
-    #             title=expense.title,
-    #             description=expense.description,
-    #             purchase_id=added_Purchase.id,
-    #         )
-    #     )
-    #     db.commit()
     crud.create_product_items(purchase.products, added_Purchase.id, db)
-    # for product_item in base_purchase.products:
-    #     db.add(
-    #         models.ProductItem(
-    #             unit_price=product_item.unit_price,
-    #             effective_unit_price=product_item.effective_unit_price,
-    #             quantity=product_item.quantity,
-    #             product_id=product_item.product_id,
-    #             purchase_id=added_Purchase.id,
-    #             total_value=(product_item.effective_unit_price * product_item.quantity),
-    #         )
-    #     )
-    #     db.commit()
+    pid_list = []
+    for product in purchase.products:
+        pid_list.append(product.product_id)
+    crud.update_total_quantity(pid_list, db)
     return crud.read_purchase(added_Purchase.id, db)
 
 
